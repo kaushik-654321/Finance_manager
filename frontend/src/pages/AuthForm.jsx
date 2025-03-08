@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import "./authform.css";
 
-const API_URL = "https://reimagined-winner-6p9qqpq74xw3w7v-5001.app.github.dev/api/user";
+const API_URL = "https://financemanager-production-2712.up.railway.app/api/user";
 
 const AuthForm = () => {
   const navigate = useNavigate();
