@@ -74,7 +74,7 @@ const Transactions = () => {
               <th className="border p-2">Description</th>
               <th className="border p-2">Amount</th>
               <th className="border p-2">Type</th>
-              <th className="border p-2">Actions</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -86,14 +86,7 @@ const Transactions = () => {
                   ${Math.abs(transaction.amount)}
                 </td>
                 <td className="border p-2 capitalize">{transaction.type}</td>
-                <td className="border p-2">
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
-                    onClick={() => handleDelete(transaction._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+                
               </tr>
             ))}
           </tbody>
