@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "https://reimagined-winner-6p9qqpq74xw3w7v-5001.app.github.dev/api/transactions";
+const API_URL = "https://financemanager-production-2712.up.railway.app/api/transactions";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -63,7 +63,7 @@ const Transactions = () => {
             <th className="border p-2">Description</th>
             <th className="border p-2">Amount</th>
             <th className="border p-2">Type</th>
-            <th className="border p-2">Action</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -75,11 +75,7 @@ const Transactions = () => {
                 ${Math.abs(transaction.amount)}
               </td>
               <td className="border p-2 capitalize">{transaction.type}</td>
-              <td className="border p-2">
-                <button onClick={() => handleDelete(transaction._id)} className="bg-red-500 text-white px-2 py-1 rounded">
-                  Delete
-                </button>
-              </td>
+             
             </tr>
           ))}
         </tbody>

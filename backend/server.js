@@ -6,7 +6,7 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 const allowedOrigins = [
-  "https://reimagined-winner-6p9qqpq74xw3w7v-5173.app.github.dev/transactions", // Your frontend URL
+  "https://financemanager-production-2712.up.railway.app", // Your frontend URL
 ]
 // Allow requests from your frontend origin
 app.use(
