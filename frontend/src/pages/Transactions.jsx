@@ -1,35 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 const API_URL = "https://financemanager-production-2712.up.railway.app/api/transactions";
 
+const fetchTransactions = async () => {
+  const response = await axios.get(API_URL);
+  return response.data;
+};
+
 const Transactions = () => {
-  const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  // Fetch transactions with React Query (caching included)
+  const { data: transactions = [], isLoading, error } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: fetchTransactions,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
 
-  const fetchTransactions = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      setTransactions(response.data);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
       await axios.delete(`${API_URL}/${id}`);
-      setTransactions(transactions.filter((transaction) => transaction._id !== id));
-    } catch (error) {
-      console.error("Error deleting transaction:", error);
-    }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["transactions"]); // Refresh data after delete
+    },
+  });
+
+  const handleDelete = (id) => {
+    deleteMutation.mutate(id);
   };
 
+  // Filter transactions
   const filteredTransactions = transactions.filter(
     (transaction) =>
       (filter === "all" || transaction.type === filter) &&
@@ -56,30 +62,43 @@ const Transactions = () => {
         </select>
       </div>
 
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border p-2">Date</th>
-            <th className="border p-2">Description</th>
-            <th className="border p-2">Amount</th>
-            <th className="border p-2">Type</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTransactions.map((transaction) => (
-            <tr key={transaction._id} className="text-center">
-              <td className="border p-2">{new Date(transaction.date).toLocaleDateString()}</td>
-              <td className="border p-2">{transaction.description}</td>
-              <td className={`border p-2 ${transaction.amount < 0 ? "text-red-500" : "text-green-500"}`}>
-                ${Math.abs(transaction.amount)}
-              </td>
-              <td className="border p-2 capitalize">{transaction.type}</td>
-             
+      {/* Handle Loading & Error States */}
+      {isLoading && <div className="text-center py-4 text-gray-600">Loading transactions...</div>}
+      {error && <div className="text-center py-4 text-red-500">Error loading data!</div>}
+
+      {!isLoading && !error && (
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border p-2">Date</th>
+              <th className="border p-2">Description</th>
+              <th className="border p-2">Amount</th>
+              <th className="border p-2">Type</th>
+              <th className="border p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredTransactions.map((transaction) => (
+              <tr key={transaction._id} className="text-center">
+                <td className="border p-2">{new Date(transaction.date).toLocaleDateString()}</td>
+                <td className="border p-2">{transaction.description}</td>
+                <td className={`border p-2 ${transaction.amount < 0 ? "text-red-500" : "text-green-500"}`}>
+                  ${Math.abs(transaction.amount)}
+                </td>
+                <td className="border p-2 capitalize">{transaction.type}</td>
+                <td className="border p-2">
+                  <button
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+                    onClick={() => handleDelete(transaction._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

@@ -1,12 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const authRoutes = require("./routes/authRoutes");
 const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 app.use(express.json());
 const allowedOrigins = [
-  "https://financemanager-production-2712.up.railway.app", // Your frontend URL
+  "https://financemanager-production-2712.up.railway.app",
+
 ]
 // Allow requests from your frontend origin
 app.use(
@@ -28,6 +30,6 @@ mongoose
 
 const transactionRoutes = require("./routes/transactionRoutes");
 app.use("/api/transactions", transactionRoutes);
-
+app.use("/api/user", authRoutes);
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
