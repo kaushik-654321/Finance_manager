@@ -7,8 +7,7 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 const allowedOrigins = [
-  "https://financemanager-production-2712.up.railway.app",
-
+  "https://finance-manager-xi-two.vercel.app", // Your frontend URL
 ]
 // Allow requests from your frontend origin
 app.use(
@@ -20,8 +19,16 @@ app.use(
   })
 );
 
-// OR (Allow all origins, useful for development only)
+// // OR (Allow all origins, useful for development only)
 app.use(cors());
+
+// ✅ Explicitly handle preflight (`OPTIONS`) requests
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", allowedOrigins[0]);
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  res.sendStatus(204); // No content
+});
 
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
