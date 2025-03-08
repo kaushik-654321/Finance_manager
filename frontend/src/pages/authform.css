@@ -1,0 +1,15 @@
+.login-btn {
+    background-color: #3B82F6;
+    /* Tailwind blue-500 */
+    padding-top: 0.75rem;
+    /* Equivalent to py-3 */
+    padding-bottom: 0.75rem;
+    border-radius: 0.25rem;
+    /* Equivalent to rounded */
+    transition: all 0.2s ease-in-out;
+}
+
+.login-btn:hover {
+    background-color: #2563EB;
+    /* Tailwind blue-600 */
+}
